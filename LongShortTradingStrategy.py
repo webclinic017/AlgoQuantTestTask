@@ -1,6 +1,5 @@
 import numpy as np
-import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from operator import itemgetter
 
 
@@ -161,9 +160,9 @@ class LongShortTradingStrategy:
             if self.__cap[-1] <= 0.0:
                 break
 
-        self.__cap = pd.Series(self.__cap, self.__prices_data.index[1:len(self.__cap) + 1], name='Strategy capital')
-        self.__cap_ret = pd.Series((self.cap[1:].values / self.cap[:-1].values) - 1, self.__cap.index[1:],
-                                   name='Strategy returns')
+        self.__cap = Series(self.__cap, self.__prices_data.index[1:len(self.__cap) + 1], name='Strategy capital')
+        self.__cap_ret = Series((self.cap[1:].values / self.cap[:-1].values) - 1, self.__cap.index[1:],
+                                name='Strategy returns')
 
     @property
     def prices_data(self):
