@@ -13,7 +13,7 @@ The repository implements backtesting of the Long/Short trading strategy using t
 
 ### How to view the project
 Fisrt, look at OneHourDataResults.ipynb - it presents the complete history of the research performed for the 1hor data.  
-While viewing the OneHourDataResults.ipynb, you can open LongShortTradingStrategy.py and get known with the details of the trading strategy.  
+While viewing the OneHourDataResults.ipynb, you can open LongShortTradingStrategy.py and get to know with the details of the trading strategy.  
 If you are interested in the logic of the strategy parameters optimization, look at the optimize_strategy_params(...) function in tools.py.  
 
 Once you've done with OneHourDataResults.ipynb, you can look at DailyDataResults.ipynb. The presentation for the daily data is not so detailed because the daily dataset is much poorer that 1h. But it is still interesting to see how strategy performs on daily data.
