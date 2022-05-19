@@ -259,6 +259,14 @@ class LongShortTradingStrategy:
         self.__correlation = np.corrcoef(self.__cap_ret.values,
                                          self.__returns_data[self.benchmark_ticker].values[1:])[1, 0]
 
+    @property
+    def trade_returns(self):
+        """
+        Array of returns for each trade
+        trade_return = (sell_price - buy_price) / buy_price
+        """
+        return self.__trade_returns
+
     def __clear_work_variables(self):
         self.__cap = []
         self.__cap_ret = None
@@ -268,6 +276,7 @@ class LongShortTradingStrategy:
         self.__sharpe = None
         self.__cagr = None
         self.__correlation = None
+        self.__trade_returns = []
 
         self.__tickers_info = {ticker: self.TickerInfo() for ticker in self.__returns_data.columns}
         self.__current_portf = dict()  # {ticker : quantity}
@@ -339,13 +348,12 @@ class LongShortTradingStrategy:
                 # Position can't be closed if there's no price
                 continue
 
-            # There is no need to calculate current ret if we already decided to close position
-            if not close_pos:
-                ret = self.__calculate_position_ret(t, ticker, info)
-                close_pos = (ret >= self.max_profit) or (ret <= -self.max_loss)
+            ret = self.__calculate_position_ret(t, ticker, info)
+            close_pos |= (ret >= self.max_profit) or (ret <= -self.max_loss)
 
             if close_pos:
                 self.__orders.update({ticker: -self.__current_portf[ticker]})
+                self.__trade_returns.append(ret)
                 if info.pos == -1:
                     self.__shorted_cash += self.__current_portf[ticker] * info.sell_price
                 info.clear()
