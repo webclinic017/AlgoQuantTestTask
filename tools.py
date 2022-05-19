@@ -1,5 +1,5 @@
 from LongShortTradingStrategy import LongShortTradingStrategy
-from numpy import isnan, mean
+from numpy import isnan, mean, power
 import pandas as pd
 import matplotlib.pyplot as plt
 import optuna
@@ -74,9 +74,11 @@ def plot_strategy_results(strategy, name):
     plt.yticks(size=15)
     plt.legend(fontsize=15)
     tmp = (round(strategy.sharpe, 2), str(round(strategy.cagr * 100, 2)) + '%',
+           str(round((power(strategy.cagr + 1, 1/365) - 1) * 100, 2)) + '%',
            str(round(mean(strategy.trade_returns) * 100, 2)) + '%',
            strategy.benchmark_ticker, round(strategy.correlation, 2))
-    plt.title(name + '\nSharpe ratio = %s\nCAGR = %s\nAverage return per trade = %s\nCorrelation with %s = %s' % tmp,
+    plt.title(name + '\nSharpe ratio = %s\nCAGR = %s\nAverage daily return = %s'
+                     '\nAverage return per trade = %s\nCorrelation with %s = %s' % tmp,
               fontsize=20)
     plt.show()
 
