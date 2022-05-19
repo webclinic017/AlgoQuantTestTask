@@ -272,6 +272,7 @@ class LongShortTradingStrategy:
         self.__tickers_info = {ticker: self.TickerInfo() for ticker in self.__returns_data.columns}
         self.__current_portf = dict()  # {ticker : quantity}
         self.__cash = self.start_cap
+        self.__shorted_cash = 0
 
         self.__orders = dict()  # {ticker : quantity}
         self.__can_make_trades = True
@@ -345,12 +346,14 @@ class LongShortTradingStrategy:
 
             if close_pos:
                 self.__orders.update({ticker: -self.__current_portf[ticker]})
+                if info.pos == -1:
+                    self.__shorted_cash += self.__current_portf[ticker] * info.sell_price
                 info.clear()
 
         if not (len(self.__orders) == 0):
             self.__make_trades(t, self.__orders)
             self.__orders.clear()
-            self.__can_make_trades = self.__cash > 0.0
+            self.__can_make_trades = self.__cash - 2 * self.__shorted_cash > 0
 
     def __open_positions_if_needed(self, t):
         if not self.__can_make_trades:
@@ -390,6 +393,7 @@ class LongShortTradingStrategy:
                 self.__orders.update({ticker: -cap_per_ticker / price})
                 self.__tickers_info[ticker].pos = -1
                 self.__tickers_info[ticker].sell_price = price
+                self.__shorted_cash += cap_per_ticker
 
             self.__make_trades(t, self.__orders)
             self.__orders.clear()
